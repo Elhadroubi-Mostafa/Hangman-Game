@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman Game</title>
+  <link rel="stylesheet" href="hangman.css">
+</head>
+<body> 
+  <img class="img1" src="gold.png" alt="foot" >
+  <img class="img2" src="foot.png" alt="ft">
+  <div class="container">
+    <div class="letters"></div>
+  </div>
+  <script>
+    let container = document.querySelector('.container');
+    let letters = document.querySelector('.letters');
+    let character = 'qwertyuiopasdfghjklmzxc vbn';
+   
+    for(let i = 0; i < 27; i++){
+      if(character[i] === ' '){
+        let letter = document.createElement('span');
+        letter.classList.add('letter');
+        letter.setAttribute('id', 'space');
+        letter.innerHTML = character[i];
+        letters.appendChild(letter);
+      }
+      else{
+        let letter = document.createElement('span');
+        letter.classList.add('letter');
+        letter.innerHTML = character[i];
+        letters.appendChild(letter);
+      }
+    }
+    let question = [
+      {
+        Q:'Which country has appeared in three World Cup finals, but never won the competition?',
+        A:'Netherlands',
+      },
+      {
+        Q:'Which club has won the most Champions League titles?',
+        A:'Real Madrid',
+      },
+      {
+        Q:'The Scudetto is the name given to the league title in which European country?',
+        A:'Italy',
+      },
+      {
+        Q:'Which footballer has won the Premier League with both Leicester City and Manchester City?',
+        A:'Riyad Mahrez',
+      },
+      {
+        Q:'What country did Eusébio play international football for?',
+        A:'Portugal',
+      },
+      {
+        Q:'Which English club was the first to win the European Cup twice?',
+        A:'Liverpool',
+      }
+    ]
+
+    
+    let questions = document.createElement('div');
+    let h1 = document.createElement('h1');
+    // let indexes = 0;
+    let indexes = Math.floor(Math.random() * question.length);
+    let arrIndex = [];
+    
+    questions.classList.add('questions');
+    questions.appendChild(h1);
+    h1.innerHTML = question[indexes].Q;
+    container.insertBefore(questions, letters);
+    
+    
+    for(let j = 0; j < question[indexes].A.length; j++){
+      let dash = document.createElement('span');
+      dash.classList.add('dash');
+      dash.innerHTML = '-';
+      questions.appendChild(dash);
+    }
+    let p = document.createElement('p');
+    let ChanceNumber = 5;
+    p.innerHTML = 'Number of Chance: ' + `<span id='span'>${ChanceNumber}</span>`;
+    p.style.cssText = 'font-size: 30px; color: #000'; 
+    questions.appendChild(p);
+
+    let alphabet = document.querySelectorAll('.letter');
+    
+    let IsFind = false; 
+    let count = 0; 
+    let Timer = document.createElement('span');
+    let time = 35;
+    Timer.style.cssText = 'display:block; text-align:center; font-size:30px; padding:20px; font-weight:bold; color: #1670eedf';
+    Timer.innerHTML = 'Timer : ' + time + 's';
+    container.insertBefore(Timer, questions);
+
+    // let tryAgain = document.createElement('button');
+   
+    console.log(indexes);
+    function Div(message, button, colorMsg, opacity, background){
+      let div = document.createElement('div');
+      let ShowMsg = document.createElement('p');
+      let tryAgain = document.createElement('button');
+      tryAgain.setAttribute('id', 'tryAgain');
+      div.setAttribute('id', 'div');
+      div.style.cssText = `width:350px; height:140px; position:absolute; top:50%; background: #2d2fb8df; left:50%; border-radius:10px;transform: translate(-50%, -50%);
+      box-shadow: -2px -2px 5px #141313df`;
+      ShowMsg.style.cssText = `color:${colorMsg}; font-size:26px; padding:20px; text-align:center`;
+      ShowMsg.innerHTML = `${message}`;
+      tryAgain.style.cssText = `font-size:18px; padding:10px; margin:auto; display:block; border:none; border-radius:10px; color:#fff; background:${background}; cursor:pointer
+      `;
+      tryAgain.innerHTML = `${button}`;
+      document.body.appendChild(div);
+      div.appendChild(ShowMsg);
+      div.appendChild(tryAgain);
+      container.style.opacity = `${opacity}`;
+    }
+    
+    
+    function repeat(){
+      time = 35;
+      container.style.opacity = '1';
+      div.style.display = 'none';
+      clearInterval(SetInterval);
+      SetInterval = setInterval(ShowMsg, 1000);
+      alphabet.forEach(char => {
+        char.style.cssText = 'background: #0c0c0c';
+      })
+      let dashes = document.querySelectorAll('.dash');
+      dashes.forEach(dashes => {
+        dashes.remove();
+      })
+      
+      for(let j = 0; j < question[indexes].A.length; j++){
+      let dash = document.createElement('span');
+      dash.classList.add('dash');
+      dash.innerHTML = '-';
+      questions.insertBefore(dash, p);
+      }
+      count = 0;
+      div.remove();
+      Timer.classList.remove('Timer');
+      ChanceNumber = 5;
+      p.innerHTML = 'Number of Chance: ' + `<span id='span'>${ChanceNumber}</span>`;
+    }
+
+    function outOver(padding, fontSize, boxShadow, transition){
+      tryAgain.style.padding = padding;
+      tryAgain.style.transition = transition;
+      tryAgain.style.fontSize = fontSize;
+      tryAgain.style.boxShadow = boxShadow;
+    }
+    function ShowMsg(){
+      if(time <= 10 && time > 0){
+        Timer.classList.add('Timer');
+      }
+      time--;
+      Timer.innerHTML = 'Timer : ' + time + 's';
+      if(time === 0){
+        Div('GameOver!!','Try again', '#db0e0edf', 0.5, '#d11d35df');
+        let tryAgain = document.getElementById('tryAgain');
+        let div = document.getElementById('div');
+        tryAgain.addEventListener('mouseover', function(){
+          outOver('11px', '19px', '2px 2px 10px #D3D3D3, -2px -2px 10px #D3D3D3', '0.4s')
+        })
+        tryAgain.addEventListener('mouseout', function(){
+          outOver('10px', '18px', 'none');
+        })
+        tryAgain.addEventListener('click', function(){
+          repeat();
+        })
+      }
+      if(time < 0){
+        time = 0;
+        // Timer.classList.add('Timer');
+        Timer.innerHTML = 'Timer : ' + time + 's';
+      }
+      if(time > 0 && count === question[indexes].A.length){
+        clearInterval(SetInterval);
+        Div('Great!! move on','Next >>', '#c74d4df6', 1, '#0a0');
+        
+        let tryAgain = document.getElementById('tryAgain');
+        let div = document.getElementById('div');
+        
+        tryAgain.addEventListener('mouseover', function(){
+          outOver('11px', '19px', '2px 2px 5px #D3D3D3, -2px -2px 5px #D3D3D3', '0.4s')
+        })
+        tryAgain.addEventListener('mouseout', function(){
+          outOver('10px', '18px', 'none');
+        })
+
+        tryAgain.addEventListener('click', function(){
+          arrIndex.push(indexes);
+          if(arrIndex.length === question.length){
+            Div('Congratulations!!','Finished', '#59d185f6', 1, '#30bd41df');
+          }
+          else{
+            indexes = Math.floor(Math.random() * question.length);
+            while(arrIndex.includes(indexes)){
+              indexes = Math.floor(Math.random() * question.length);
+          }
+          }
+          repeat();
+          h1.innerHTML = question[indexes].Q;
+        })
+      }
+      
+      if(ChanceNumber === 0){
+        Div('GameOver','Try again', '#fff', 0.2, '#d11d35df');
+        let tryAgain = document.getElementById('tryAgain');
+        let div = document.getElementById('div');
+        clearInterval(SetInterval);
+        tryAgain.addEventListener('mouseover', function(){
+          outOver('11px', '19px', '2px 2px 10px #D3D3D3, -2px -2px 10px #D3D3D3', '0.4s')
+        })
+        tryAgain.addEventListener('mouseout', function(){
+          outOver('10px', '18px', 'none');
+        })
+        tryAgain.addEventListener('click', function(){
+        repeat();
+        })
+      }
+    }
+  let SetInterval = setInterval(ShowMsg, 1000);
+    alphabet.forEach(item => {
+      item.addEventListener('click', function(ev){
+        let dashes = document.querySelectorAll('.dash');
+        SetInterval;
+        for(let i = 0; i < question[indexes].A.length; i++){
+          if(ev.target.textContent === question[indexes].A[i].toLowerCase()){
+            dashes[i].innerText = question[indexes].A[i];
+            item.style.cssText = 'background: green';
+            IsFind = true;
+            count++;
+          }
+        }
+        if(IsFind === false){
+          ChanceNumber--;
+          p.innerHTML = 'Number of Chance: ' + `<span id='span'>${ChanceNumber}</span>`;
+          item.style.cssText = 'background:red';
+        }
+        else{
+          IsFind = false;
+        }
+        })
+    })
+    //window.location.href = 'url()';
+    // let btn = document.createElement('button');
+    // btn.style.cssText = 'background: gray; padding:10px;font-size:20px; border-radius:10px; width:100px;color:#fff; font-size:20px'
+    // btn.innerHTML = 'Try';
+    // container.appendChild(btn);
+
+  </script>
+</body>
+</html>
